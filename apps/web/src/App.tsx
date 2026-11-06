@@ -1,12 +1,24 @@
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { normalizeRoomCode } from '@ortak-perde/shared';
-import { CenterMessage } from './components/Status';
-import { HostPage } from './host/HostPage';
+import { CenterMessage, Spinner } from './components/Status';
 import { HomePage } from './pages/HomePage';
 import { JoinCodePage } from './pages/JoinCodePage';
-import { PlayerPage } from './player/PlayerPage';
+
+// Split bundles: phones never download the host screen (QR encoder, settings) and vice versa.
+const HostPage = lazy(() => import('./host/HostPage').then((m) => ({ default: m.HostPage })));
+const PlayerPage = lazy(() =>
+  import('./player/PlayerPage').then((m) => ({ default: m.PlayerPage })),
+);
+
+function Loading() {
+  return (
+    <div className="stage-bg flex min-h-dvh items-center justify-center">
+      <Spinner />
+    </div>
+  );
+}
 
 function PlayerRoute() {
   const { code = '' } = useParams();
@@ -32,7 +44,7 @@ function NotFound() {
 export function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={null}>
+      <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/host" element={<HostPage />} />

@@ -169,7 +169,8 @@ export function buildApp({
     // SPA fallback: client-side routes (/host, /join/ABCD…) get index.html.
     fastify.setNotFoundHandler((req, reply) => {
       const url = req.raw.url ?? '';
-      if (req.method === 'GET' && !url.startsWith('/api') && !url.startsWith('/socket.io')) {
+      const isPage = req.method === 'GET' || req.method === 'HEAD';
+      if (isPage && !url.startsWith('/api') && !url.startsWith('/socket.io')) {
         return reply.type('text/html').sendFile('index.html');
       }
       return reply.code(404).send({ error: 'not found' });
