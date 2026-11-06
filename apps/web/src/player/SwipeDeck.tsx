@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { Movie, PlayerView, SwipeAction } from '@ortak-perde/shared';
@@ -20,6 +20,8 @@ export function SwipeDeck({ view, movies }: { view: PlayerView; movies: Movie[] 
   const { me } = view;
   const byId = useMemo(() => new Map(movies.map((m) => [m.id, m])), [movies]);
   const [pending, setPending] = useState<Set<number>>(() => new Set());
+  // Mirror of `pending` that updates synchronously, so rapid taps/keys never target the same card.
+  const pendingRef = useRef<Set<number>>(new Set());
   const [lastAction, setLastAction] = useState<SwipeAction | 'undo' | null>(null);
   const [undoBusy, setUndoBusy] = useState(false);
   const [vetoConfirm, setVetoConfirm] = useState(false);
@@ -27,6 +29,7 @@ export function SwipeDeck({ view, movies }: { view: PlayerView; movies: Movie[] 
 
   // Drop optimistic entries once the server has recorded them.
   useEffect(() => {
+    pendingRef.current = new Set([...pendingRef.current].filter((id) => !me.swipes[id]));
     setPending((prev) => {
       const next = new Set([...prev].filter((id) => !me.swipes[id]));
       return next.size === prev.size ? prev : next;
@@ -50,6 +53,7 @@ export function SwipeDeck({ view, movies }: { view: PlayerView; movies: Movie[] 
   const send = useCallback(
     async (movieId: number, action: SwipeAction, veto = false) => {
       setLastAction(action);
+      pendingRef.current.add(movieId);
       setPending((p) => new Set(p).add(movieId));
       setError(null);
       vibrate(action === 'super' ? [10, 40, 10] : veto ? [30, 30, 30] : 12);
@@ -57,6 +61,7 @@ export function SwipeDeck({ view, movies }: { view: PlayerView; movies: Movie[] 
         ? await emitAck('player:veto', { movieId })
         : await emitAck('player:swipe', { movieId, action });
       if (!res.ok && res.error !== 'ALREADY_SWIPED') {
+        pendingRef.current.delete(movieId);
         setPending((p) => {
           const next = new Set(p);
           next.delete(movieId);
@@ -70,9 +75,10 @@ export function SwipeDeck({ view, movies }: { view: PlayerView; movies: Movie[] 
 
   const swipe = useCallback(
     (action: SwipeAction) => {
-      if (current) void send(current.id, action);
+      const next = me.order.find((id) => !me.swipes[id] && !pendingRef.current.has(id));
+      if (next !== undefined) void send(next, action);
     },
-    [current, send],
+    [me.order, me.swipes, send],
   );
 
   const undo = useCallback(async () => {
