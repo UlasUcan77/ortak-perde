@@ -42,10 +42,15 @@ function defaultWebDist(): string | null {
   return fs.existsSync(path.join(candidate, 'index.html')) ? candidate : null;
 }
 
-export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
+export function loadConfig(
+  env: NodeJS.ProcessEnv = process.env,
+  { dev = false }: { dev?: boolean } = {},
+): ServerConfig {
   const region = nonEmpty(env.TMDB_REGION)?.toUpperCase() ?? 'TR';
   return {
-    port: Number(env.PORT ?? 3000),
+    // In development the public port is Vite's (5173); the API server sits behind its proxy on
+    // SERVER_PORT so a PORT variable meant for the web app doesn't collide with it.
+    port: Number(dev ? (env.SERVER_PORT ?? 3000) : (env.PORT ?? 3000)),
     host: env.HOST ?? '0.0.0.0',
     publicUrl: nonEmpty(env.PUBLIC_URL),
     allowedOrigins: (env.ALLOWED_ORIGINS ?? '')

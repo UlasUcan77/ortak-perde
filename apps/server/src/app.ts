@@ -6,7 +6,7 @@ import Fastify, { LogController, type FastifyInstance } from 'fastify';
 import helmet from '@fastify/helmet';
 import fastifyStatic from '@fastify/static';
 import { Server } from 'socket.io';
-import { APP_NAME, type Locale } from '@ortak-perde/shared';
+import { APP_NAME, MAX_PLAYERS, roomCodeSchema, type Locale } from '@ortak-perde/shared';
 import { SampleCatalog } from './catalog/sample';
 import { IMAGE_BASE, TmdbCatalog } from './catalog/tmdb';
 import type { MovieCatalog } from './catalog/types';
@@ -124,6 +124,16 @@ export function buildApp({
       catalog.getProviders(locale, config.region).catch(() => []),
     ]);
     return { catalogMode: catalog.mode, region: config.region, genres, providers };
+  });
+
+  // Lets the join screen show "room not found / full / already started" before asking for a name.
+  fastify.get<{ Params: { code: string } }>('/api/rooms/:code', async (req) => {
+    const parsed = roomCodeSchema.safeParse(req.params.code);
+    const room = parsed.success ? manager.getRoom(parsed.data) : undefined;
+    if (!room) return { status: 'not-found' };
+    if (room.phase !== 'LOBBY') return { status: 'in-progress' };
+    if (room.players.length >= MAX_PLAYERS) return { status: 'full' };
+    return { status: 'open' };
   });
 
   // Poster proxy so the share card can draw TMDB posters on a canvas without CORS tainting.

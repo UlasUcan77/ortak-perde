@@ -1,9 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { APP_NAME } from '@ortak-perde/shared';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/inter';
+import './index.css';
+import './i18n';
+import { App } from './App';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <h1>{APP_NAME}</h1>
+    <App />
   </StrictMode>,
 );

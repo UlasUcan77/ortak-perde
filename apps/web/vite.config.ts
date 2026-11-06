@@ -3,8 +3,8 @@ import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import os from 'node:os';
 
-const SERVER_PORT = Number(process.env.SERVER_PORT ?? process.env.PORT ?? 3000);
-const WEB_PORT = Number(process.env.WEB_PORT ?? 5173);
+const SERVER_PORT = Number(process.env.SERVER_PORT ?? 3000);
+const WEB_PORT = Number(process.env.WEB_PORT ?? process.env.PORT ?? 5173);
 
 function lanAddress(): string | null {
   for (const list of Object.values(os.networkInterfaces())) {

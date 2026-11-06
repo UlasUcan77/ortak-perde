@@ -2,7 +2,7 @@ import { buildApp } from './app';
 import { loadConfig, loadDotEnv } from './config';
 
 loadDotEnv();
-const config = loadConfig();
+const config = loadConfig(process.env, { dev: process.argv.includes('--dev') });
 const app = buildApp({ config, logger: true });
 const log = app.fastify.log;
 

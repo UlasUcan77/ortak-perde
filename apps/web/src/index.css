@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body {
+    @apply bg-ink-900 text-white antialiased;
+    font-family: theme('fontFamily.sans');
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    min-height: 100dvh;
+  }
+  #root {
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: theme('fontFamily.display');
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-spot ring-offset-2 ring-offset-ink-900;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-12 select-none items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold transition
+      active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply btn bg-spot text-ink-950 shadow-glow hover:bg-spot-soft;
+  }
+  .btn-velvet {
+    @apply btn bg-velvet text-white hover:bg-velvet-soft;
+  }
+  .btn-ghost {
+    @apply btn border border-white/15 bg-white/5 text-white hover:bg-white/10;
+  }
+  .card-surface {
+    @apply rounded-3xl border border-white/10 bg-ink-800/80 backdrop-blur;
+  }
+  .chip {
+    @apply inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition
+      active:scale-95;
+  }
+  .label {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-mist;
+  }
+  .field {
+    @apply w-full rounded-xl border border-white/15 bg-ink-950/60 px-3 py-2 text-white placeholder:text-white/40
+      focus:border-spot focus:outline-none;
+  }
+}
+
+/* Spotlight + curtain backdrop shared by all screens. */
+.stage-bg {
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(242, 193, 78, 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 110%, rgba(224, 71, 95, 0.12), transparent 70%), #0b0910;
+}
+
+.curtain-left,
+.curtain-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 7vw;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, #6e1426 0px, #9e1f3a 18px, #6e1426 36px);
+  opacity: 0.55;
+  mask-image: linear-gradient(90deg, black, transparent);
+}
+.curtain-left {
+  left: 0;
+}
+.curtain-right {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.poster-placeholder {
+  background:
+    radial-gradient(circle at 30% 20%, hsl(var(--hue) 70% 60% / 0.55), transparent 55%),
+    radial-gradient(circle at 80% 90%, hsl(calc(var(--hue) + 40) 70% 45% / 0.6), transparent 60%),
+    linear-gradient(160deg, hsl(var(--hue) 45% 22%), hsl(calc(var(--hue) + 30) 40% 10%));
+}
+
+.skeleton {
+  background: linear-gradient(100deg, #1e1826 30%, #2a2234 50%, #1e1826 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
