@@ -2,7 +2,32 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { loadDotEnv } from '../src/config';
+import { loadConfig, loadDotEnv } from '../src/config';
+
+describe('loadConfig', () => {
+  it('uses Render’s external URL and proxy when PUBLIC_URL is not set', () => {
+    const cfg = loadConfig({ RENDER: 'true', RENDER_EXTERNAL_URL: 'https://perde.onrender.com' });
+    expect(cfg.publicUrl).toBe('https://perde.onrender.com');
+    expect(cfg.trustProxy).toBe(true);
+  });
+
+  it('prefers an explicit PUBLIC_URL and TRUST_PROXY', () => {
+    const cfg = loadConfig({
+      RENDER: 'true',
+      RENDER_EXTERNAL_URL: 'https://perde.onrender.com',
+      PUBLIC_URL: 'https://ortakperde.com',
+      TRUST_PROXY: 'false',
+    });
+    expect(cfg.publicUrl).toBe('https://ortakperde.com');
+    expect(cfg.trustProxy).toBe(false);
+  });
+
+  it('defaults to no public URL and no proxy trust', () => {
+    const cfg = loadConfig({});
+    expect(cfg.publicUrl).toBeNull();
+    expect(cfg.trustProxy).toBe(false);
+  });
+});
 
 const dirs: string[] = [];
 afterEach(() => {

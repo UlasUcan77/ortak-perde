@@ -103,11 +103,21 @@ docker build -t ortak-perde . && docker run -p 3000:3000 -e TMDB_API_KEY=xxx -e 
 
 A container can't see your home network's IP, so with Docker set **`PUBLIC_URL` to your computer's LAN address** (e.g. `http://192.168.1.20:3000`) or open the main screen via that address instead of `localhost`.
 
+## One-click deploy (Render)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/UlasUcan77/ortak-perde)
+
+1. Click the button and sign in to Render with GitHub.
+2. Render reads [`render.yaml`](render.yaml) and only asks for `TMDB_API_KEY` (stored as a secret).
+3. Hit **Apply / Deploy**. After a few minutes `https://ortak-perde-xxxx.onrender.com` is live; add `/host` for the main screen.
+
+No need for `PUBLIC_URL` or `TRUST_PROXY`: the server uses Render's address (`RENDER_EXTERNAL_URL`) for the QR code automatically. If you attach your own domain, set `PUBLIC_URL` to it.
+
 ## Self-hosting
 
 A single Node.js process (HTTP + WebSocket on one port), no database. Runs anywhere that supports WebSockets. Rooms live in memory, so run **one instance** (horizontal scaling would need sticky sessions and a shared adapter — see the [roadmap](docs/ROADMAP.md)).
 
-- **Render:** New Web Service → this repo → Docker runtime (or Node: build `npm ci && npm run build`, start `npm start`). Env: `TMDB_API_KEY`, `PUBLIC_URL=https://<service>.onrender.com`, `TRUST_PROXY=true`. Free instances sleep, which drops open rooms.
+- **Render:** easiest via the button above. Manually: New Web Service → this repo → Docker runtime; `TMDB_API_KEY` is the only variable you need. Free instances sleep when idle (waking takes about a minute and drops open rooms).
 - **Fly.io:** `fly launch` (detects the Dockerfile), `internal_port = 3000`, `fly secrets set TMDB_API_KEY=... PUBLIC_URL=https://<app>.fly.dev TRUST_PROXY=true`, keep a single machine with `min_machines_running = 1`.
 - **Railway:** connect the repo; the Dockerfile is used automatically and Railway provides `PORT`. Env: `TMDB_API_KEY`, `PUBLIC_URL`, `TRUST_PROXY=true`.
 - **Your own server:** run the container behind Caddy/Nginx and forward WebSocket upgrade headers for `/socket.io/`. With HTTPS, `PUBLIC_URL` must start with https (HSTS is enabled then).

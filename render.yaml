@@ -1,0 +1,15 @@
+# Render Blueprint — one-click deploy: https://render.com/deploy?repo=https://github.com/UlasUcan77/ortak-perde
+# Render builds the Dockerfile, injects PORT and RENDER_EXTERNAL_URL (used as the QR address)
+# and asks for TMDB_API_KEY during setup (it is stored as a secret, never in this repo).
+services:
+  - type: web
+    name: ortak-perde
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: TMDB_API_KEY
+        sync: false
+      - key: TMDB_REGION
+        value: TR

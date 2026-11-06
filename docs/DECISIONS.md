@@ -57,3 +57,7 @@ Kısa, gerekçeli notlar. Yeni önemli bir karar verdiğinizde buraya ekleyin.
 - Kaydırmalar iyimser (optimistic) uygulanır; sunucu reddederse kart geri gelir. Hızlı ardışık dokunuşlar senkron bir referansla aynı kartı iki kez göndermez.
 - Sayfalar tembel yüklenir: telefonlar QR kodlayıcı ve host ayarlarını indirmez.
 - `prefers-reduced-motion`: konfeti kapanır, kart dönmesi ve giriş animasyonları kapanır; CSS animasyonları neredeyse sıfıra iner.
+
+## Yayınlama
+
+- **Render blueprint (`render.yaml`)** tek tıkla kurulum sağlar. `PUBLIC_URL` boşsa Render'ın otomatik verdiği `RENDER_EXTERNAL_URL` QR adresi olarak kullanılır; `RENDER` ortam değişkeni varken `TRUST_PROXY` açıkça kapatılmadıkça açık kabul edilir. Böylece kullanıcının girmesi gereken tek değer `TMDB_API_KEY` olur.

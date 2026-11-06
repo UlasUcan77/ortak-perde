@@ -53,14 +53,16 @@ export function loadConfig(
     // SERVER_PORT so a PORT variable meant for the web app doesn't collide with it.
     port: Number(dev ? (env.SERVER_PORT ?? 3000) : (env.PORT ?? 3000)),
     host: env.HOST ?? '0.0.0.0',
-    publicUrl: nonEmpty(env.PUBLIC_URL),
+    // Render sets RENDER_EXTERNAL_URL (e.g. https://ortak-perde.onrender.com) automatically.
+    publicUrl: nonEmpty(env.PUBLIC_URL) ?? nonEmpty(env.RENDER_EXTERNAL_URL),
     allowedOrigins: (env.ALLOWED_ORIGINS ?? '')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),
     tmdbApiKey: nonEmpty(env.TMDB_API_KEY),
     region: /^[A-Z]{2}$/.test(region) ? region : 'TR',
-    trustProxy: bool(env.TRUST_PROXY),
+    // Behind Render's proxy the client IP comes from X-Forwarded-For.
+    trustProxy: bool(env.TRUST_PROXY) || (env.TRUST_PROXY === undefined && !!env.RENDER),
     logLevel: env.LOG_LEVEL ?? 'info',
     webDist: env.WEB_DIST === 'off' ? null : (nonEmpty(env.WEB_DIST) ?? defaultWebDist()),
     revealMs: REVEAL_DURATION_MS,

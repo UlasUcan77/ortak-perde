@@ -103,11 +103,21 @@ docker build -t ortak-perde . && docker run -p 3000:3000 -e TMDB_API_KEY=xxx -e 
 
 Konteyner içinden ev ağınızın IP'si görülemeyeceği için Docker'da **`PUBLIC_URL`'i bilgisayarınızın LAN adresine** (ör. `http://192.168.1.20:3000`) ayarlayın ya da ana ekranı `localhost` yerine o adresle açın.
 
+## Tek tıkla yayınla (Render)
+
+[![Render'a yükle](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/UlasUcan77/ortak-perde)
+
+1. Butona tıklayın ve GitHub hesabınızla Render'a giriş yapın.
+2. Render, depodaki [`render.yaml`](render.yaml) dosyasını okuyup servisi hazırlar; sizden yalnızca `TMDB_API_KEY` ister (gizli değişken olarak saklanır).
+3. **Apply / Deploy** deyin. Birkaç dakika sonra `https://ortak-perde-xxxx.onrender.com` adresi hazır olur; ana ekran için sonuna `/host` ekleyin.
+
+`PUBLIC_URL` ve `TRUST_PROXY` ayarlamanız gerekmez: sunucu Render'ın verdiği adresi (`RENDER_EXTERNAL_URL`) QR için otomatik kullanır. Kendi alan adınızı bağlarsanız `PUBLIC_URL`'i o adrese ayarlayın.
+
 ## Self-host rehberi
 
 Uygulama tek bir Node.js süreci olarak çalışır (HTTP + WebSocket aynı portta), veritabanı gerekmez. WebSocket destekleyen her platformda çalışır. Odalar bellekte tutulduğu için **tek örnek (instance)** çalıştırın; yatay ölçekleme için sticky session + ortak adapter gerekir (bkz. [ROADMAP](docs/ROADMAP.md)).
 
-- **Render:** "New Web Service" → repo → Runtime: Docker (veya Node: build `npm ci && npm run build`, start `npm start`). Ortam değişkenleri: `TMDB_API_KEY`, `PUBLIC_URL=https://<servis>.onrender.com`, `TRUST_PROXY=true`. Ücretsiz planda uyku moduna geçince açık odalar silinir.
+- **Render:** En kolayı yukarıdaki butondur. Elle kurmak için "New Web Service" → repo → Runtime: Docker; ortam değişkeni olarak yalnızca `TMDB_API_KEY` yeterli. Ücretsiz planda servis bir süre kullanılmayınca uykuya geçer; uyanması yaklaşık bir dakika sürer ve açık odalar silinir.
 - **Fly.io:** `fly launch` (Dockerfile'ı algılar), `internal_port = 3000`, `fly secrets set TMDB_API_KEY=... PUBLIC_URL=https://<app>.fly.dev TRUST_PROXY=true`. `min_machines_running = 1` ve tek makine kullanın.
 - **Railway:** Repo'yu bağlayın, Dockerfile otomatik kullanılır; `PORT` Railway tarafından verilir. Değişkenler: `TMDB_API_KEY`, `PUBLIC_URL`, `TRUST_PROXY=true`.
 - **Kendi sunucunuz:** Docker ile çalıştırıp önüne Caddy/Nginx koyun; WebSocket upgrade başlıklarını iletin (`/socket.io/`). HTTPS kullanıyorsanız `PUBLIC_URL` https ile başlamalı (HSTS bu durumda açılır).
