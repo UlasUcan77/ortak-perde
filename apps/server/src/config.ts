@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import util from 'node:util';
 import { REVEAL_DURATION_MS } from '@ortak-perde/shared';
 
 export interface ServerConfig {
@@ -71,13 +72,25 @@ export function loadConfig(
   };
 }
 
-/** Loads the first .env found in the working directory or up to two parents (repo root). */
-export function loadDotEnv(cwd = process.cwd()): string | null {
+/**
+ * Loads the first .env found in the working directory or up to two parents (repo root).
+ * Real environment variables win, except empty ones: an inherited `TMDB_API_KEY=` must not
+ * hide the value in .env (process.loadEnvFile would keep the empty value).
+ */
+export function loadDotEnv(
+  cwd = process.cwd(),
+  env: NodeJS.ProcessEnv = process.env,
+): string | null {
   let dir = cwd;
   for (let i = 0; i < 3; i++) {
     const file = path.join(dir, '.env');
     if (fs.existsSync(file)) {
-      process.loadEnvFile(file);
+      const raw = fs.readFileSync(file, 'utf8');
+      // Notepad may save UTF-8 with a byte order mark.
+      const parsed = util.parseEnv(raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw);
+      for (const [key, value] of Object.entries(parsed)) {
+        if (value !== undefined && !env[key]) env[key] = value;
+      }
       return file;
     }
     dir = path.dirname(dir);
