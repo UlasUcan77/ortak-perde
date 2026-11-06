@@ -1,0 +1,28 @@
+name: ✨ Özellik önerisi / Feature request
+description: Yeni bir fikir önerin / Suggest an idea
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Hangi sorunu çözüyor? / What problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Önerilen çözüm / Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Kabul kriterleri / Acceptance criteria
+      placeholder: |
+        - [ ] ...
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: İlkeler / Principles
+      options:
+        - label: Hesap, analitik veya kalıcı kullanıcı verisi gerektirmiyor / Needs no accounts, analytics or stored user data

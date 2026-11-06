@@ -1,0 +1,40 @@
+name: 🐞 Hata bildirimi / Bug report
+description: Bir şey beklendiği gibi çalışmıyor / Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Ne oldu? / What happened?
+      description: Ne bekliyordunuz, ne oldu? / What did you expect and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Yeniden üretme adımları / Steps to reproduce
+      placeholder: |
+        1. /host aç
+        2. İki telefonla katıl
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: screen
+    attributes:
+      label: Hangi ekran? / Which screen?
+      options:
+        - Ana ekran (host / TV)
+        - Telefon (oyuncu)
+        - Sunucu / kurulum (server / setup)
+  - type: input
+    id: env
+    attributes:
+      label: Ortam / Environment
+      placeholder: 'ör. iOS 18 Safari, Chrome 140 / Windows, Docker, Node 22, TMDB modu veya örnek veri'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Loglar / Logs
+      description: Sunucu veya tarayıcı konsolu çıktısı. TMDB anahtarınızı paylaşmayın! / Never paste your TMDB key.
+      render: shell
