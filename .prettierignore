@@ -3,3 +3,4 @@ node_modules
 coverage
 package-lock.json
 apps/web/public/tmdb-logo.svg
+apps/server/src/data/sample-movies.json

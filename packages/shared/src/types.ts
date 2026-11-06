@@ -70,7 +70,12 @@ export interface PlayerPublic {
 }
 
 export type DeckNoticeCode =
-  'relaxed-dislikes' | 'short-deck' | 'sample-fallback' | 'providers-ignored' | 'no-movies';
+  | 'relaxed-dislikes'
+  | 'short-deck'
+  | 'sample-fallback'
+  | 'providers-ignored'
+  | 'no-movies'
+  | 'build-failed';
 
 export interface DeckNotice {
   code: DeckNoticeCode;
@@ -117,7 +122,6 @@ export interface HostView extends BaseView {
   joinBase: string | null;
   results: GameResults | null;
   revealEndsAt: number | null;
-  error: string | null;
 }
 
 export interface PlayerSelf {
