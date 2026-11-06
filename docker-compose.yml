@@ -1,0 +1,13 @@
+services:
+  ortak-perde:
+    build: .
+    image: ortak-perde:latest
+    ports:
+      - '3000:3000'
+    environment:
+      # TMDB anahtarı yoksa örnek veri seti kullanılır / falls back to sample data without a key
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
+      # Telefonların açacağı adres, örn. http://192.168.1.20:3000 / URL phones will open
+      PUBLIC_URL: ${PUBLIC_URL:-}
+      TMDB_REGION: ${TMDB_REGION:-TR}
+    restart: unless-stopped

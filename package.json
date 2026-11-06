@@ -1,0 +1,40 @@
+{
+  "name": "ortak-perde",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QR ile katılınan, kaydırmalı grup film seçici / Swipe-together group movie picker",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c magenta,cyan \"npm run dev -w @ortak-perde/server\" \"npm run dev -w @ortak-perde/web\"",
+    "build": "npm run build -w @ortak-perde/web && npm run build -w @ortak-perde/server",
+    "start": "node apps/server/dist/index.js",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/node": "^22.9.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "minimatch": "^11.0.5"
+  }
+}
